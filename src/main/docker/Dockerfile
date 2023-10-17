@@ -1,15 +1,19 @@
-FROM amazoncorretto:21
+FROM amazoncorretto:21 as build
 
-# Definimos un directorio por defectopara trabajar
-WORKDIR /java-test
+WORKDIR /app/
 
-# Copiamos de nuestro directorio, el Main.class a Docker
-#COPY ./Main.java ./Main.java
+COPY volume/HolaMundo.java /app/
 
-# Creamos el archivo Main.class
-# RUN javac Main.java
+RUN javac HolaMundo.java
 
-# Le decimos que ejecute el archivo tipo java, llamado "Main"
-ENTRYPOINT [ "javac" ]
+ENTRYPOINT [ "javac", "HolaMundo.java" ]
 
-#prueba2
+FROM amazoncorretto:21-alpine-jdk as execute
+
+WORKDIR /app/
+
+COPY --from=build /app/HolaMundo.class /app/
+
+ENTRYPOINT [ "java", "HolaMundo" ]
+
+
